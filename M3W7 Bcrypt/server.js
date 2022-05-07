@@ -7,8 +7,6 @@ const app = express();
 app.use(morgan('dev'));
 app.set('view engine', 'ejs');
 
-const cookieSession = require('cookie-session');
-
 app.use(cookieParser());
 
 app.use(express.urlencoded({extended: true}));
@@ -132,7 +130,7 @@ app.get('/login', (req, res) => {
   userId ?  user = users[userId] : user = null;
   
   const templateVars  = {combos, user};
-  res.render('login');
+  res.render('login', templateVars);
 });
 
 app.get('/register', (req, res) => {
@@ -141,7 +139,7 @@ app.get('/register', (req, res) => {
   userId ?  user = users[userId] : user = null;
   
   const templateVars  = {combos, user};
-  res.render('register');
+  res.render('register', templateVars);
 });
 
 app.post('/login', (req, res) => {
@@ -152,10 +150,6 @@ app.post('/login', (req, res) => {
 
   if (!user) {
     return res.send('Error: User does not exist');
-  }
-
-  if (!result) {
-    return res.send('Error: Passwords do not match');
   }
 
   res.cookie('userId', user.id);
@@ -191,7 +185,7 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  req.cookies = null;
+  res.clearCookie('userId');
 
   res.redirect('/menu');
 });

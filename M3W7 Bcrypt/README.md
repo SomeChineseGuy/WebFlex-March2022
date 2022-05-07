@@ -3,5 +3,5 @@
 - [ ] Strong Passwords
 - [ ] Encrypted Cookies
 - [ ] HTTP Secure
-- [ ] REST
-- [ ] Method Override
+- [ ] REST (Stretch)
+- [ ] Method Override (Stretch)
