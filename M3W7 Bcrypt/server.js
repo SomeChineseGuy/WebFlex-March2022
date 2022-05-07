@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
-const port = 9002;
+const cookieParser = require('cookie-parser');
+const port = 9001;
 
 const app = express();
 app.use(morgan('dev'));
@@ -8,10 +9,7 @@ app.set('view engine', 'ejs');
 
 const cookieSession = require('cookie-session');
 
-app.use(cookieSession({
-  name: 'potato',
-  keys: ['my', 'secret', 'keys']
-}));
+app.use(cookieParser());
 
 app.use(express.urlencoded({extended: true}));
 
@@ -68,12 +66,12 @@ const combos = {
 // }
 
 app.get('/', (req, res) => {
-  res.send("<h1> Welcome! </h1>");
+  res.redirect("/menu");
 })
 
 // Browse
 app.get('/menu', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.cookies.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
@@ -82,12 +80,12 @@ app.get('/menu', (req, res) => {
 });
 
 app.get('/menu/new', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.cookies.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
   const templateVars  = {combos, user};
-  res.render('new', templateVars);
+  res.render('new');
 })
 
 // Add new
@@ -103,7 +101,7 @@ app.get('/menu/:id', (req, res) => {
   console.log(req.params.id);
   const userInput = req.params.id;
   const combo = combos[userInput];
-  const userId = req.session.userId;
+  const userId = req.cookies.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   const templateVars  = {combos, user};
@@ -129,7 +127,7 @@ app.post('/menu/:id/edit', (req, res) => {
 
 // User
 app.get('/login', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.cookies.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
@@ -138,7 +136,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.cookies.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
@@ -161,7 +159,6 @@ app.post('/login', (req, res) => {
   }
 
   res.cookie('userId', user.id);
-  req.session.userId = user.id;
 
   res.redirect('/menu');
 });
@@ -187,15 +184,14 @@ app.post('/register', (req, res) => {
   users[id] = newUser;
   console.log(users);
 
-  // res.cookie('userId', newUser.id);
-  req.session.userId = newUser.id;
+  res.cookie('userId', newUser.id);
+  
 
   res.redirect('/menu');
 });
 
 app.post('/logout', (req, res) => {
-  // res.clearCookie('userId');
-  req.session = null;
+  req.cookies = null;
 
   res.redirect('/menu');
 });
