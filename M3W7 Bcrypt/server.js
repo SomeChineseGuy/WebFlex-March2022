@@ -1,15 +1,25 @@
 const express = require('express');
 const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const port = 9001;
+const bcrypt = require('bcryptjs');
 
 const app = express();
 app.use(morgan('dev'));
 app.set('view engine', 'ejs');
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(express.urlencoded({extended: true}));
+
+const cookieSession = require('cookie-session')
+
+
+app.use(cookieSession({
+  name: 'burger',
+  keys: ['cheese', 'bread', 'ham'],
+}))
+
 
 // helper functions
 const genRandomId = () => {
@@ -69,21 +79,24 @@ app.get('/', (req, res) => {
 
 // Browse
 app.get('/menu', (req, res) => {
-  const userId = req.cookies.userId;
+  const userId = req.session.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
+  console.log(req.session)
+  req.session.pageView ++ 
+  req.session.pageClick["menu"] = "User has clicked menu"
   const templateVars  = {combos, user};
   res.render('menu', templateVars);
 });
 
 app.get('/menu/new', (req, res) => {
-  const userId = req.cookies.userId;
+  const userId = req.session.userId;
   let user;
   userId ?  user = users[userId] : user = null;
-  
+  req.session.pageView ++
   const templateVars  = {combos, user};
-  res.render('new');
+  res.render('new', templateVars);
 })
 
 // Add new
@@ -99,7 +112,8 @@ app.get('/menu/:id', (req, res) => {
   console.log(req.params.id);
   const userInput = req.params.id;
   const combo = combos[userInput];
-  const userId = req.cookies.userId;
+  const userId = req.session.userId;
+  req.session.pageView ++
   let user;
   userId ?  user = users[userId] : user = null;
   const templateVars  = {combos, user};
@@ -110,6 +124,7 @@ app.get('/menu/:id', (req, res) => {
 app.post('/menu/:id/delete', (req, res) => {
   const comboId = req.params.id;
   delete combos[comboId];
+  req.session.pageView ++
   res.redirect('/menu');
 });
 
@@ -119,13 +134,14 @@ app.post('/menu/:id/edit', (req, res) => {
   console.log(req.body)
   const id = req.params.id;
   const single = req.body;
+  req.session.pageView ++
   combos[id] = single;
   res.redirect('/menu');
 })
 
 // User
 app.get('/login', (req, res) => {
-  const userId = req.cookies.userId;
+  const userId = req.session.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
@@ -134,7 +150,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const userId = req.cookies.userId;
+  const userId = req.session.userId;
   let user;
   userId ?  user = users[userId] : user = null;
   
@@ -152,6 +168,9 @@ app.post('/login', (req, res) => {
     return res.send('Error: User does not exist');
   }
 
+  const result = bcrypt.compareSync(pass, user.password);
+  if(!result) return res.send("Error : wrong password")
+
   res.cookie('userId', user.id);
 
   res.redirect('/menu');
@@ -168,25 +187,31 @@ app.post('/register', (req, res) => {
     return res.send('Error: A user with that email already exists');
   }
 
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt)
 
   const newUser = {
     id: id,
     email: email,
-    password: password
+    password: hashedPassword
   };
 
   users[id] = newUser;
   console.log(users);
 
-  res.cookie('userId', newUser.id);
+  req.session.userId = newUser.id;
+  req.session.pageView = 0;
+  req.session.pageClick = {};
+
+  // res.cookie('userId', newUser.id);
   
 
   res.redirect('/menu');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('userId');
-
+  // res.clearCookie('userId');
+  req.session.userId = null;
   res.redirect('/menu');
 });
 
