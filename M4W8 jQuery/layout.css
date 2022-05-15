@@ -1,0 +1,13 @@
+body {
+  background-color: tomato;
+  color: white;
+  font-size: 18px;
+}
+
+section {
+  padding: 4rem 2rem;
+}
+
+section  .child {
+
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="box.css">
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+  <section class="box-container">
+    <div class="box box-one">
+      <h1>box-one</h1>      
+    </div>
+    <div class="box box-two">
+      <h1>box-two</h1>
+    </div>
+    <div class="box box-three">
+      <h1>box-three</h1>
+    </div>
+    <div class="box box-four">
+      <h1>box-four</h1>
+    </div>
+  </section>
+  <div class="results"></div>
+
+  <section class="container">
+    <form action="/someplace" method="POST" class="name-form">
+      <label for="name">Tpye your name</label>
+      <input type="text" name="name">
+      <button>Submit</button>
+    </form>
+    <div class="name-container">
+      <h1>My name:</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="child">
+      <div class="child"></div>
+    </div>
+  </section>
+
+  <section class="container">
+    <form action="/someplace" method="POST" class="num-form">
+      <label for="name">Tpye your name</label>
+      <input type="number" name="name" class="num-input">
+      <button>Submit</button>
+    </form>
+    <div class="num-container">
+      <h1>0</h1>
+    </div>
+  </section>
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script src="vanilia.js"></script>
+  <script src="jquery.js"></script>
+  
+</body>
+</html>
