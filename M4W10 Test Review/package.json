@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^9.2.2",
+    "sinon": "^13.0.1"
+  },
+  "scripts": {
+    "question 1": "mocha tests/test_t1q3.js",
+    "question 2": "mocha tests/test_t2q1.js",
+    "question 3": "mocha tests/test_t2q3.js",
+    "question 4": "mocha tests/test_t3q1.js",
+    "question 5": "mocha tests/test_t3q2.js",
+    "question 6": "mocha tests/test_t3q3.js",
+    "question 7": "mocha tests/test_t3q4.js"
+  }
+}
